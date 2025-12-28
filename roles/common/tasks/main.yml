@@ -1,0 +1,58 @@
+- name: Install base packages
+  apt:
+    upgrade: safe
+    update_cache: true
+    cache_valid_time: 3600
+    autoremove: yes
+
+- name: Install base packages
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - ufw
+    update_cache: true
+    cache_valid_time: 3600
+    autoremove: yes
+    autoclean: yes
+
+- name: UFW allow SSH
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: UFW allow HTTP/HTTPS
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: [80, 443]
+
+# TURN ports (UDP is critical for WebRTC)
+- name: UFW allow TURN TCP/UDP 3478
+  ufw:
+    rule: allow
+    port: "3478"
+    proto: "{{ item }}"
+  loop: [tcp, udp]
+
+# TURN TLS port (optional but good to have)
+- name: UFW allow TURN TLS 5349 TCP
+  ufw:
+    rule: allow
+    port: "5349"
+    proto: tcp
+
+# TURN relay range (pick a range and allow UDP)
+- name: UFW allow TURN relay UDP range
+  ufw:
+    rule: allow
+    proto: udp
+    port: "49160:49200"
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+    policy: deny
+

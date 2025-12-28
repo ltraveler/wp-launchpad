@@ -1,0 +1,13 @@
+- name: Deploy Matrix (Synapse + TURN) over Traefik
+  hosts: wp-core
+  become: true
+  vars_files:
+    - group_vars/secrets.yml
+  roles:
+    - common
+    - docker
+    #- wp_core
+    #- db_core
+    #- wp_content
+    #- traefik
+
